@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>eSIM Plan Finder</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 2rem auto;
+            padding: 0 1rem;
+        }
+
+        .finder-form {
+            background: #f5f7fa;
+            padding: 2rem;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+
+        .input-group {
+            margin-bottom: 1.5rem;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 0.5rem;
+            color: #2d3748;
+            font-weight: 600;
+        }
+
+        input, select {
+            width: 100%;
+            padding: 0.8rem;
+            border: 2px solid #e2e8f0;
+            border-radius: 8px;
+            font-size: 16px;
+        }
+
+        button {
+            background: #4299e1;
+            color: white;
+            padding: 1rem 2rem;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: background 0.2s;
+        }
+
+        button:hover {
+            background: #3182ce;
+        }
+
+        .results {
+            margin-top: 2rem;
+        }
+
+        .plan-card {
+            background: white;
+            padding: 1.5rem;
+            border-radius: 8px;
+            margin-bottom: 1rem;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+        }
+
+        .provider {
+            color: #4299e1;
+            font-weight: bold;
+            margin-bottom: 0.5rem;
+        }
+
+        .coverage {
+            color: #718096;
+            font-size: 0.9rem;
+        }
+    </style>
+</head>
+<body>
+    <div class="finder-form">
+        <h2>Find Your Perfect eSIM Plan</h2>
+        
+        <div class="input-group">
+            <label for="destination">Destination Country</label>
+            <input type="text" id="destination" placeholder="e.g. Thailand, Japan...">
+        </div>
+
+        <div class="input-group">
+            <label for="days">Trip Duration (days)</label>
+            <input type="number" id="days" min="1" value="7">
+        </div>
+
+        <div class="input-group">
+            <label for="data">Data Needed (GB)</label>
+            <input type="number" id="data" min="1" value="10">
+        </div>
+
+        <button onclick="findPlans()">Find Best Plans</button>
+
+        <div class="results" id="results"></div>
+    </div>
+
+    <script>
+        // eSIM套餐数据库
+        const plans = [
+            {
+                name: "Asia Explorer",
+                provider: "Airalo",
+                countries: ["thailand", "malaysia", "singapore", "vietnam"],
+                days: { min: 5, max: 14 },
+                data: 10,
+                price: 12.99,
+                coverage: "Covers 8 Southeast Asian countries"
+            },
+            {
+                name: "Global Nomad",
+                provider: "Nomad",
+                countries: ["global"],
+                days: { min: 7, max: 30 },
+                data: 15,
+                price: 24.99,
+                coverage: "100+ countries worldwide"
+            },
+            {
+                name: "Europe Unlimited",
+                provider: "Holafly",
+                countries: ["france", "germany", "italy", "spain"],
+                days: { min: 7, max: 30 },
+                data: "Unlimited",
+                price: 47.00,
+                coverage: "26 European countries"
+            }
+        ];
+
+        function findPlans() {
+            const destination = document.getElementById('destination').value.toLowerCase();
+            const days = parseInt(document.getElementById('days').value);
+            const data = parseInt(document.getElementById('data').value);
+            
+            const results = plans.filter(plan => {
+                // 匹配逻辑
+                const countryMatch = plan.countries.includes('global') || 
+                                  plan.countries.includes(destination);
+                
+                const dayMatch = days >= plan.days.min && days <= plan.days.max;
+                
+                const dataMatch = plan.data === "Unlimited" || 
+                                (typeof plan.data === 'number' && data <= plan.data);
+                
+                return countryMatch && dayMatch && dataMatch;
+            });
+
+            displayResults(results);
+        }
+
+        function displayResults(results) {
+            const container = document.getElementById('results');
+            container.innerHTML = '';
+
+            if(results.length === 0) {
+                container.innerHTML = '<div class="plan-card">No matching plans found. Try adjusting your search.</div>';
+                return;
+            }
+
+            results.forEach(plan => {
+                const html = `
+                    <div class="plan-card">
+                        <div class="provider">${plan.provider} - ${plan.name}</div>
+                        <div>📅 ${plan.days.min}-${plan.days.max} days</div>
+                        <div>📶 ${plan.data}GB Data</div>
+                        <div>💰 $${plan.price}</div>
+                        <div class="coverage">${plan.coverage}</div>
+                    </div>
+                `;
+                container.insertAdjacentHTML('beforeend', html);
+            });
+        }
+    </script>
+</body>
+</html>
