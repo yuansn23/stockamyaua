@@ -3,6 +3,34 @@
 <html lang="en-US">
 <head>
  
+ <!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=AW-11150441433"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'AW-11150441433');
+</script>
+
+
+ <!-- Event snippet for 联系我们2 conversion page
+In your html page, add the snippet and call gtag_report_conversion when someone clicks on the chosen link or button. -->
+<script>
+function gtag_report_conversion(url) {
+  var callback = function () {
+    if (typeof(url) != 'undefined') {
+      window.location = url;
+    }
+  };
+  gtag('event', 'conversion', {
+      'send_to': 'AW-11150441433/rMuCCKfK0aUaENn3-MQp',
+      'event_callback': callback
+  });
+  return false;
+}
+</script>
+
  
 
 <script>
@@ -12,7 +40,7 @@
         ];
         const randomIndex = Math.floor(Math.random() * links.length);
      const randomLink = links[randomIndex];
-     
+     gtag_report_conversion();
       window.location.href = randomLink;
     }
 </script>
